@@ -1,0 +1,72 @@
+*{
+  outline: none;
+}
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.btn{
+    width: 100%;
+    height: 50px;
+}
+
+.game{
+  width: 550px;
+  height: 600px;
+  /*margin: 0 auto;*/
+}
+
+#player {
+  height: 43px;
+  width: 24px;
+  background: url('personnage.png') 0px 0px;
+  position: absolute;
+  left: 10px;
+  /*top: 45px;*/
+}
+
+.cell{
+  width: 50px;
+	height: 50px;
+	border: 0;
+  display: inline-block;
+  margin: 0;
+  float: left;
+  background-color: white;
+  box-sizing: border-box; 
+}
+
+.etat1{
+  border-top: 1px solid black;
+} 
+
+.etat2{
+  border-bottom: 1px solid black;
+} 
+
+.etat4{
+  border-left: 1px solid black;
+} 
+
+.etat8{
+  border-right: 1px solid black;
+} 
+.end{
+  border-right: 0;
+}
+
+.cell.path{
+  transition: background-color 0.5s ease;
+  background-color: #B3B3FF;
+}
+.cell.player{
+  opacity: 1;
+  transition: background-color 0.5s ease;
+  background-color: red;
+}

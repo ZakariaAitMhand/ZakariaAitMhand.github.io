@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="index.css">
+
+<!-- ---------------------------------------------------------------------------------------- -->
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+<!-- ---------------------------------------------------------------------------------------- -->
+
+    <title>Labyrinth</title>
+  </head>
+  <body style="overflow: hidden;">
+    <noscript>
+      You need to enable JavaScript to run this app.
+    </noscript>
+    <div id="root"></div>
+  <script type="text/javascript" src="personnage.js"></script>
+    <script type="text/jsx">
+      class Cell extends React.Component{
+        render(){
+          return(
+            <div className={this.props.cls}
+            onClick={this.props.onClick}>
+            </div>
+          );
+        }
+      }
+      class Hint extends React.Component{
+        render(){
+          return(
+            <button className="btn btn-primary"
+            onClick={this.props.click} >
+              Hint
+            </button>
+          );
+        }
+      }
+
+      class Laby extends React.Component{
+        
+        constructor(props){
+          super(props);
+          this.state={
+            game_cells: 110, //number of all cells in the game
+            game_with: 11, //number of cells per row
+            Old_position: 0,
+            New_position: 0,
+            view_path: 0,
+            path: [0, 11 ,22 ,23 ,34 ,33 ,44 ,55 ,66 ,77 ,88 ,99 ,100 ,101 ,90 ,79 ,68 ,69 ,58 ,47 ,36 ,25 ,26 ,37 ,48 ,59 ,70 ,71 ,72 ,73 ,84 ,95 ,96 ,107 ,108 ,109],
+            cell_states: [
+            /*[r, l, d, u]*/
+              [8, 4, 0, 1], [0, 4, 2, 1], [0, 0, 2, 1], [0, 0, 2, 1], [0, 0, 2, 1], [0, 0, 2, 1], [0, 0, 2, 1], [0, 0, 2, 1], [0, 0, 2, 1], [8, 0, 0, 1], [8, 4, 0, 1], 
+              [8, 4, 0, 0], [0, 4, 0, 1], [0, 0, 0, 1], [0, 0, 2, 1], [0, 0, 2, 1], [0, 0, 0, 1], [0, 0, 2, 1], [0, 0, 0, 1], [0, 0, 2, 1], [8, 0, 2, 0], [8, 4, 0, 0], 
+              [0, 4, 2, 0], [8, 0, 0, 0], [8, 4, 0, 0], [0, 4, 0, 1], [8, 0, 0, 1], [8, 4, 0, 0], [8, 4, 0, 1], [8, 4, 0, 0], [0, 4, 0, 1], [8, 0, 0, 1], [8, 4, 0, 0], 
+              [0, 4, 0, 1], [8, 0, 2, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], 
+              [8, 4, 0, 0], [8, 4, 0, 1], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], 
+              [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 2, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 2, 0], [8, 4, 0, 0], [0, 4, 2, 0], [8, 0, 2, 0], [8, 4, 0, 0], [8, 4, 0, 0], 
+              [8, 4, 0, 0], [8, 4, 0, 0], [0, 4, 0, 1], [8, 0, 0, 0], [0, 4, 0, 0], [0, 0, 0, 1], [0, 0, 0, 0], [8, 0, 0, 1], [8, 4, 0, 1], [0, 4, 2, 0], [8, 0, 0, 0],
+              [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [0, 4, 2, 1], [8, 0, 2, 0],
+              [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [8, 4, 0, 0], [0, 4, 2, 0], [0, 0, 0, 0], [0, 0, 2, 1], [8, 0, 2, 1],
+              [0, 4, 2, 0], [0, 0, 2, 0], [8, 0, 2, 0], [8, 4, 2, 0], [8, 4, 2, 0], [8, 4, 2, 0], [0, 4, 2, 0], [8, 0, 2, 1], [0, 4, 2, 0], [0, 0, 2, 1], [8, 0, 2, 1]
+            ]
+          }
+        }
+        setGameFocus(){
+          ReactDOM.findDOMNode(this.refs.game).focus();
+        }
+        renderAll(){
+          var table = [];
+          for (var i = 0; i < this.state.game_cells; i++) {
+            if(i%this.state.game_with === 0 && i>0)
+              table.push (<br clear="both"/>);
+            if(i === this.state.game_cells-1)
+              table.push (this.renderCell(i, this.state.cell_states[i], 0, 1));
+            else
+              table.push (this.renderCell(i, this.state.cell_states[i]));
+          }
+          return(table);
+        }
+        hundleClick(){
+          this.setState({view_path: 1})
+        }
+        renderHint(){
+
+          return(
+            <Hint click={()=>this.hundleClick()} />
+          );
+        }
+        renderCell(pos, etat, isPlayer, isEnd) {
+          var e = "cell ";
+          if(this.state.view_path===1 && this.state.path.indexOf(pos)!==-1){
+            e += "path ";
+          }
+          for (var i = 0; i<etat.length; i++) {
+            if (etat[i]!== 0) {
+              e += "etat"+etat[i]+" ";
+            }
+          }
+          var end = (isEnd===1)? " end" :"";
+          isPlayer = 0;
+          if (isPlayer === 0 && this.state.New_position === pos) {
+            isPlayer = 1;
+          }
+          var player = /*(isPlayer===1)? " player" :*/"";
+
+          if(isEnd===1 && isPlayer===1){
+            this.setState({Old_position: 0, New_position: 0, view_path: 0});
+          }
+            return (
+              <Cell 
+                cls={e+player+end}
+                />
+            );
+        }
+        onKeyPressed(e) {
+          function getWallPositions(cell, game_with){
+            var ln = parseInt(cell/game_with);
+            var clmn = cell%game_with;
+            var walls;
+              /*[r, l, d, u]*/
+            if (cell>0) {
+              walls = [(50+(50*clmn)), (50*clmn), (50+(50*ln)), (50*ln)];
+            }
+            else{
+              walls = [50, 0, 50, 0];
+            }
+            console.log("walls : "+walls)
+            return walls
+          }
+          p.setPlayer("player");
+          if(e.keyCode>36 && e.keyCode<41){
+              var position = this.state.New_position;
+              var New_position = this.state.New_position;
+              var thisState = this.state.cell_states[position];
+              var currentCell = p.getCurrentCell();
+              var playerPos = p.getPosition(e.keyCode);
+              var etat = this.state.cell_states[currentCell]
+              var walls = getWallPositions(currentCell, this.state.game_with)
+              var wall;
+              if(e.keyCode===37){
+                wall = (etat[1]>0)? 1 : 0;
+                if(playerPos > (wall * walls[1])){
+                  p.moveLeft()
+                }
+              }
+              if(e.keyCode===38){
+                wall = (etat[3]>0)? 1 : this.state.game_with;
+                if(playerPos < (wall * walls[3])){
+                  p.moveUp()
+                }
+              }
+              if(e.keyCode===39 ){
+                wall = (etat[0]>0)? 1 : this.state.game_with;
+                if(playerPos < (wall * walls[0])){
+                  p.moveRight()
+                }
+              }
+              if(e.keyCode===40){
+                wall = (etat[2]>0)? 1 : this.state.game_with;
+                if(playerPos < (wall * walls[2])){
+                  p.moveDown()
+                }
+              }
+          }
+        }
+        render(){
+          return(
+            <div 
+              id="game" 
+              ref="game"
+              className="game" 
+              onKeyDown={(e) => this.onKeyPressed(e)}
+              tabIndex="1"
+              >
+              <div id="player"></div>
+                {this.renderAll()}
+                <br clear="both" />
+                {this.renderHint()}
+            </div>
+          );
+        }
+      }
+
+      ReactDOM.render(<Laby / >, document.getElementById('root'));
+      document.getElementById('game').focus();
+    </script>
+  </body>
+</html>
